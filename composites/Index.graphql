@@ -1,0 +1,5 @@
+type Index @createModel(accountRelation: LIST, description: "A Simple Index"){
+    title: String! @string(maxLength:100)
+    userID: String! @string(maxLength: 100)
+    createdAt: String! @string(maxLength: 100)
+}
