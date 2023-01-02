@@ -1,4 +1,7 @@
 .next
 node_modules/*
 composedb.config.json
-admin-seed.txt
+admin_seed.txt
+daemon
+.idea
+

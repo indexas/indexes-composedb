@@ -7,24 +7,6 @@ import { writeComposite } from './composites.mjs';
 const events = new EventEmitter()
 const spinner = ora();
 
-const ceramic = spawn("npm", ["run", "ceramic"]);
-ceramic.stdout.on("data", (buffer) => {
-  console.log('[Ceramic]', buffer.toString())
-  if (buffer.toString().includes("0.0.0.0:7007")) {
-    events.emit("ceramic", true);
-    spinner.succeed("ceramic node started");
-  }
-})
-
-ceramic.stderr.on('data', (err) => {
-  // TODO: figure out what causes this error in the Ceramic Daemon
-  if(!err.toString().includes('MaxListenersExceededWarning')) {
-    spinner.fail("[Ceramic] Ceramic node failed to start with error:");
-    spinner.fail(`[Ceramic] ${err.toString()}`);
-    events.emit("ceramic", false);
-  }
-})
-
 const bootstrap = async () => {
   try {
     spinner.info("[Composites] bootstrapping composites");
@@ -32,7 +14,6 @@ const bootstrap = async () => {
     spinner.succeed("Composites] composites bootstrapped");
   } catch (err) {
     spinner.fail(err.message)
-    ceramic.kill()
   }
 }
 

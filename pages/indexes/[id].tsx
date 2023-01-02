@@ -89,7 +89,7 @@ function ID() {
 
   async function readLink() {
     const result = await composeClient.executeQuery(`{
-      node(id:"kjzl6kcym7w8y7w51xmmctvt8e25jur341ceuadf2ndo5pt3fs93oihalpmneg8"){
+      node(id:"kjzl6kcym7w8y62i50yuxpqllqry2ck0bact938ukvlwcj93mjmpdta2e3uyyuf"){
         id
         ... on Index{
           title
@@ -115,7 +115,7 @@ function ID() {
 
   async function readData() {
     const result = await composeClient.executeQuery(`{
-      node(id:"kjzl6kcym7w8y7w51xmmctvt8e25jur341ceuadf2ndo5pt3fs93oihalpmneg8"){
+      node(id:"kjzl6kcym7w8y62i50yuxpqllqry2ck0bact938ukvlwcj93mjmpdta2e3uyyuf"){
         id
         ... on Index{
           title
@@ -140,7 +140,7 @@ function ID() {
       const updateindex = await composeClient.executeQuery(`
       mutation {
         updateIndex(input: {
-          id: "kjzl6kcym7w8y7w51xmmctvt8e25jur341ceuadf2ndo5pt3fs93oihalpmneg8"
+          id: "kjzl6kcym7w8y62i50yuxpqllqry2ck0bact938ukvlwcj93mjmpdta2e3uyyuf"
           content: {
             title: "${index?.title}"
           }
@@ -162,7 +162,7 @@ function ID() {
         mutation {
           createLink(input: {
             content: {
-              indexID: "kjzl6kcym7w8y7w51xmmctvt8e25jur341ceuadf2ndo5pt3fs93oihalpmneg8"
+              indexID: "kjzl6kcym7w8y62i50yuxpqllqry2ck0bact938ukvlwcj93mjmpdta2e3uyyuf"
               users: "${link?.users}"
               url: "${link?.url}"
               title: "${link?.title}"

@@ -12,6 +12,15 @@ import { Ed25519Provider } from "key-did-provider-ed25519";
 import { getResolver } from "key-did-resolver";
 import { fromString } from "uint8arrays/from-string";
 
+/// Start importing for lit signer
+import {
+  encodeDIDWithLit,
+  Secp256k1ProviderWithLit,
+} from "../key-did-provider-secp256k1-with-lit";
+
+/// End importing for lit signer
+
+
 const ceramic = new CeramicClient("http://localhost:7007");
 
 /**
@@ -41,6 +50,8 @@ export const writeComposite = async (spinner) => {
  * @return {Promise<void>} - return void when DID is authenticated.
  */
 const authenticate = async () => {
+  console.log("Ahoy!")
+  /*
   const seed = readFileSync('./admin_seed.txt')
   const key = fromString(
     seed,
@@ -50,6 +61,18 @@ const authenticate = async () => {
     resolver: getResolver(),
     provider: new Ed25519Provider(key)
   })
+  */
+  const encodedDID = await encodeDIDWithLit("0x04f53eaacaf0bbf78fbf1606724e81e55b258aa22342fd94c9ccbaac0b3093e3a37608f96c42189574c94e21c4a101d85f381228ede5808d1c2bb719a1b7c18984");
+
+  const provider = new Secp256k1ProviderWithLit({
+    did: encodedDID,
+    ipfsId: "Qme9L6jU4CStoBZL7etpwPVX7XPWJ59Z9iFXoTPXyfgXrT",
+    pkpPublicKey:
+        "0x04f53eaacaf0bbf78fbf1606724e81e55b258aa22342fd94c9ccbaac0b3093e3a37608f96c42189574c94e21c4a101d85f381228ede5808d1c2bb719a1b7c18984",
+  });
+
+  const did = new DID({ provider, resolver: getResolver() });
+
   await did.authenticate()
   ceramic.did = did
 }
