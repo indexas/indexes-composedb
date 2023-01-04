@@ -6,6 +6,7 @@ import { Context } from "@composedb/client";
 import { compose } from "../compose";
 import { useEffect, useState } from "react";
 import { useCeramicContext } from "../../context";
+import style from "/Users/furkanozelge/dev/littttttttttt/indexes-composedb/styles/Home.module.css";
 import type { BasicLink } from "../BasicLink";
 import type { BasicIndex } from "../BasicIndex";
 import { authenticateCeramic } from "../../utils";
@@ -30,22 +31,35 @@ function ID() {
   const [titleInput, setTitleInput] = useState("");
   const [users, setUsers] = useState("");
   //links
-
-  const [linkID, setlinkID] = useState("");
-  const [linktitle, setlinktitle] = useState("");
-  const [linkurl, setlinkurl] = useState("");
-  const [linkcreatedAt, setlinkcreatedAt] = useState("");
-  const [linkupdatedAt, setlinkupdatedAt] = useState("");
-  const [linkcontent, setlinkcontent] = useState("");
+  const [linkuser,setLinkuser] =useState("");
+  const [linkID, setLinkID] = useState("");
+  const [linktitle, setLinktitle] = useState("");
+  const [linkurl, setLinkurl] = useState("");
+  const [linkcreatedAt, setLinkcreatedAt] = useState("");
+  const [linkupdatedAt, setLinkupdatedAt] = useState("");
+  const [linkcontent, setLinkcontent] = useState("");
+  const [linktags, setLinktags] = useState("");
 
   const [index, setIndex] = useState<BasicIndex | undefined>();
+  // useEffect(() => {
+  //   const timer = setTimeout(() => {
+  //     readData();
+  //     readLink();
+  //   },10000);
+  // }, [])
   const handleLogin = async () => {
     await authenticateCeramic(ceramic, composeClient);
-    await readData();
-    await readLink();
+   // await readData();
+   // await readLink();
   };
+  useEffect(() => {
+    
+    if (localStorage.getItem("did")) {
+      handleLogin();
+    }
+  }, []);
 
-  const streamIDs: string = router.query.id as string;
+  const streamIDs = router.query.id;
   const getLink = async () => {
     if (ceramic.did !== undefined) {
       const link = await composeClient.executeQuery(`
@@ -89,7 +103,7 @@ function ID() {
 
   async function readLink() {
     const result = await composeClient.executeQuery(`{
-      node(id:"kjzl6kcym7w8y62i50yuxpqllqry2ck0bact938ukvlwcj93mjmpdta2e3uyyuf"){
+      node(id:"${streamIDs}"){
         id
         ... on Index{
           title
@@ -115,7 +129,7 @@ function ID() {
 
   async function readData() {
     const result = await composeClient.executeQuery(`{
-      node(id:"kjzl6kcym7w8y62i50yuxpqllqry2ck0bact938ukvlwcj93mjmpdta2e3uyyuf"){
+      node(id:"${streamIDs}"){
         id
         ... on Index{
           title
@@ -125,24 +139,21 @@ function ID() {
     }`);
 
     setData(result.data.node);
+    console.log(data);
     setTitle(result.data.node.title);
     setUserID(result.data.node.userID);
     setCreatedAt(result.data.node.createdAt);
   }
-  useEffect(() => {
-    if (localStorage.getItem("did")) {
-      handleLogin();
-    }
-  }, []);
+ 
 
   const updateIndexTitle = async () => {
     if (ceramic.did !== undefined) {
       const updateindex = await composeClient.executeQuery(`
       mutation {
         updateIndex(input: {
-          id: "kjzl6kcym7w8y62i50yuxpqllqry2ck0bact938ukvlwcj93mjmpdta2e3uyyuf"
+          id: "${streamIDs}"
           content: {
-            title: "${index?.title}"
+            title: "${title}"
           }
         }) 
         {
@@ -162,14 +173,14 @@ function ID() {
         mutation {
           createLink(input: {
             content: {
-              indexID: "kjzl6kcym7w8y62i50yuxpqllqry2ck0bact938ukvlwcj93mjmpdta2e3uyyuf"
-              users: "${link?.users}"
-              url: "${link?.url}"
-              title: "${link?.title}"
-              tags: "${link?.tags}"
-              createdAt: "${link?.createdAt}"
-              updatedAt: "${link?.updatedAt}"
-              content: "${link?.content}"
+              indexID: "${streamIDs}"
+              users: "${linkuser}"
+              url: "${linkurl}"
+              title: "${linktitle}"
+              tags: "${linktags}"
+              createdAt: "${linkcreatedAt}"
+              updatedAt: "${linkupdatedAt}"
+              content: "${linkcontent}"
             }
           }) 
           {
@@ -223,20 +234,23 @@ function ID() {
   */
   return (
     <>
-      <div>
-        <div>
+      <div className={style.form}>
+        <div className={style.formGroup}>
           <button
             onClick={() => {
               handleLogin();
+              readData();
+              readLink();
             }}
           >
-            Login
+            LOGIN & FETCH INDEX
           </button>
           <input
             type="text"
             defaultValue={index?.title || ""}
             onChange={(e) => {
-              setIndex({ ...index, title: e.target.value });
+              //setIndex({ ...index, title: e.target.value });
+              setTitle(e.target.value);
             }}
           />
           <button
@@ -277,8 +291,11 @@ function ID() {
         <h3>Link Users</h3>
         <input
           type="text"
-          value={users}
-          onChange={(e) => setUsers(e.target.value)}
+          value={link?.users || ""}
+          onChange={(e) => {
+            setLink({ ...link, users: e.target.value });
+            setLinkuser(e.target.value);
+          }}
         ></input>
         <h3>Link URL</h3>
         <input
@@ -286,6 +303,7 @@ function ID() {
           defaultValue={link?.url || ""}
           onChange={(e) => {
             setLink({ ...link, url: e.target.value });
+            setLinkurl(e.target.value);
           }}
         />
         <h3>Link title</h3>
@@ -294,6 +312,7 @@ function ID() {
           defaultValue={link?.title || ""}
           onChange={(e) => {
             setLink({ ...link, title: e.target.value });
+            setLinktitle(e.target.value);
           }}
         />
         <h3>Link UpdatedAt</h3>
@@ -302,6 +321,7 @@ function ID() {
           defaultValue={link?.updatedAt || ""}
           onChange={(e) => {
             setLink({ ...link, updatedAt: e.target.value });
+            setLinkupdatedAt(e.target.value);
           }}
         />
         <h3>Link Createdat</h3>
@@ -310,6 +330,7 @@ function ID() {
           defaultValue={link?.createdAt || ""}
           onChange={(e) => {
             setLink({ ...link, createdAt: e.target.value });
+            setLinkcreatedAt(e.target.value);
           }}
         />
         <h3>Link Tags</h3>
@@ -318,6 +339,7 @@ function ID() {
           defaultValue={link?.tags || ""}
           onChange={(e) => {
             setLink({ ...link, tags: e.target.value });
+            setLinktags(e.target.value);
           }}
         />
         <h3>Link Content</h3>
@@ -326,6 +348,7 @@ function ID() {
           defaultValue={link?.content || ""}
           onChange={(e) => {
             setLink({ ...link, content: e.target.value });
+            setLinkcontent(e.target.value);
           }}
         />
         <button onClick={updateLink}>Add Link</button>
