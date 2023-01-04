@@ -20,6 +20,10 @@ const Home: NextPage = () => {
   const [index, setIndex] = useState<BasicIndex | undefined>();
   const [link, setLink] = useState<BasicLink | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [title,setTitle] = useState("");
+  const [userID,setUserID] = useState("");
+  const [createdAt,setCreatedAt] = useState("");
+
   const router = useRouter();
   const handleLogin = async () => {
     await authenticateCeramic(ceramic, composeClient);
@@ -102,9 +106,9 @@ const Home: NextPage = () => {
         mutation {
           createIndex(input: {
             content: {
-              title: "${index?.title}"
-              userID: "${index?.userID}"
-              createdAt: "${index?.createdAt}"
+              title: "${title}"
+              userID: "${userID}"
+              createdAt: "${createdAt}"
             }
           }) 
           {
@@ -229,6 +233,7 @@ const Home: NextPage = () => {
                 defaultValue={index?.title || ""}
                 onChange={(e) => {
                   setIndex({ ...index, title: e.target.value });
+                  setTitle(e.target.value);
                 }}
               />
             </div>
@@ -239,6 +244,7 @@ const Home: NextPage = () => {
                 defaultValue={index?.userID || ""}
                 onChange={(e) => {
                   setIndex({ ...index, userID: e.target.value });
+                  setUserID(e.target.value);
                 }}
               />
             </div>
@@ -249,6 +255,7 @@ const Home: NextPage = () => {
                 defaultValue={index?.createdAt || ""}
                 onChange={(e) => {
                   setIndex({ ...index, createdAt: e.target.value });
+                  setCreatedAt(e.target.value);
                 }}
               />
             </div>
