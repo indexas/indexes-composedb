@@ -273,19 +273,11 @@ const Home: NextPage = () => {
               </button>
             </div>
             <div className={styles.buttonContainer}>
-              <button
-                onClick={() => {
-                  getIndex();
-                  getLink();
-                }}
-              >
-                {loading ? "Loading..." : "Show Indexes and Links"}
-              </button>
             </div>
             <div className={styles.buttonContainer}>
               <button
                 onClick={() => {
-                  router.push("/indexes")
+                  router.push("/indexlist")
                 }}
               >
                 {"Index Page"}
