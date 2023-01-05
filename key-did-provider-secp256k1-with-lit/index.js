@@ -11,6 +11,7 @@ import * as Block from 'multiformats/block';
 import { sha256 as hasherSha256 } from 'multiformats/hashes/sha2';
 
 const ec = new elliptic.ec("secp256k1");
+
 export const litActionSignAndGetSignature = async (sha256Payload, context) => {
     log("[litActionSignAndGetSignature] sha256Payload: ", sha256Payload);
     const authSig = await LitJsSdk.checkAndSignAuthMessage({ chain: "mumbai" });
@@ -56,7 +57,7 @@ export async function encodeDIDWithLit(PKP_PUBLIC_KEY) {
     return did;
 }
 export function getPubKeyFromEncodedDID(encodedDID) {
-    log("[getPubKeyFromEncodedDID] encodedDID:", encodedDID);
+   // log("[getPubKeyFromEncodedDID] encodedDID:", encodedDID);
     const arr = encodedDID?.split(':');
     if (arr[0] != 'did')
         throw Error('string should start with did:');
@@ -66,17 +67,17 @@ export function getPubKeyFromEncodedDID(encodedDID) {
         throw Error('string should start with did:key:z');
     const str = arr[2].substring(1);
     ;
-    log("[getPubKeyFromEncodedDID] str:", str);
+    //log("[getPubKeyFromEncodedDID] str:", str);
     const bytes = u8a.fromString(str, "base58btc");
     const originalBytes = new Uint8Array(bytes.length - 2);
     bytes.forEach((_, i) => {
         originalBytes[i] = bytes[i + 2];
     });
-    log("[getPubKeyFromEncodedDID] originalBytes:", originalBytes);
+    //log("[getPubKeyFromEncodedDID] originalBytes:", originalBytes);
     const pubPoint = ec.keyFromPublic(originalBytes).getPublic();
     let pubKey = pubPoint.encode('hex', false);
     pubKey = pubKey.charAt(0) == '0' ? pubKey.substring(1) : pubKey;
-    log("[getPubKeyFromEncodedDID] pubKey:", pubKey);
+    //log("[getPubKeyFromEncodedDID] pubKey:", pubKey);
     return '0x0' + pubKey;
 }
 export function ES256KSignerWithLit(context) {
@@ -84,9 +85,9 @@ export function ES256KSignerWithLit(context) {
     const recoverable = false;
     return async (payload) => {
         const encryptedPayload = sha256(payload);
-        log("[ES256KSignerWithLit] encryptedPayload:", encryptedPayload);
+        //log("[ES256KSignerWithLit] encryptedPayload:", encryptedPayload);
         const signature = await litActionSignAndGetSignature(encryptedPayload, context);
-        log("[ES256KSignerWithLit] signature:", signature);
+        //log("[ES256KSignerWithLit] signature:", signature);
         return toJose(signature, recoverable);
     };
 }
@@ -95,11 +96,11 @@ const signWithLit = async (payload, context) => {
     const did = context.did;
     log("[signWithLit] did:", did);
     const kid = `${did}#${did.split(":")[2]}`;
-    log("[signWithLit] kid:", kid);
+    //log("[signWithLit] kid:", kid);
     const protectedHeader = {};
     const header = toStableObject(Object.assign(protectedHeader, { kid, alg: "ES256K" }));
-    log("[signWithLit] header:", header);
-    log("[signWithLit] payload:", payload);
+    //log("[signWithLit] header:", header);
+    //log("[signWithLit] payload:", payload);
     return createJWS(typeof payload === "string" ? payload : toStableObject(payload), ES256KSignerWithLit(context), header);
 };
 
@@ -113,20 +114,20 @@ const didMethodsWithLit = {
             paths: params.paths,
             exp: Math.floor(Date.now() / 1000) + 600,
         };
-        log("----- [did_authenticate] ----- ");
-        log("[didMethodsWithLit] payload:", payload);
+        //log("----- [did_authenticate] ----- ");
+        //log("[didMethodsWithLit] payload:", payload);
 
         const response = await signWithLit(payload, contextParam);
-        log("[didMethodsWithLit] response:", response);
+        //log("[didMethodsWithLit] response:", response);
         const general = toGeneralJWS(response);
-        log("[didMethodsWithLit] general:", general);
+        //log("[didMethodsWithLit] general:", general);
         return general;
     },
     did_createJWS: async (contextParam, params) => {
-        console.log("furkan" ,contextParam, params)
-        log("----- [did_createJWS] ----- ");
+        //console.log("furkan" ,contextParam, params)
+        //log("----- [did_createJWS] ----- ");
         const requestDid = params.did.split("#")[0];
-        log("[did_createJWS] requestDid:", requestDid);
+        //log("[did_createJWS] requestDid:", requestDid);
         if (requestDid !== contextParam.did)
             throw new RPCError(4100, `Unknown DID: ${contextParam.did}`);
 
@@ -146,12 +147,13 @@ const didMethodsWithLit = {
             toSign: u8a.toString(originalBlock.cid.bytes, 'base64url'),
             data: dagCBOR.decode(originalPayload)
         }
+         
         console.log("recovered", recovered)
         contextParam.originalData = originalPayload
-
+        //if(recovered.data.header.controllers == )
 
         const jws = await signWithLit(params.payload, contextParam);
-        log("[did_createJWS] jws:", jws);
+        //log("[did_createJWS] jws:", jws);
         return { jws: toGeneralJWS(jws) };
     },
     did_decryptJWE: async () => {
