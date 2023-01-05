@@ -89,6 +89,11 @@ const litAction = () => {
         }else{
             op = "create"
         }
+        if(!isPermittedAddress(tokenId, address)){
+            error("Only permitted addresses can create or update an index with a pkp")
+        }else{
+            sign()
+        }
     }
     if(data.model == 'link'){
         if(data.prev){
@@ -98,23 +103,17 @@ const litAction = () => {
         }else{
             op = "create"
         }
-    }
 
-
-    if(data.model == 'index'){
-        if(!pkp.isPermitted(address)){
-            error("Only permitted addresses can create or update an index with a pkp")
-        }else{
-            sign()
-        }
-    }
-
-    if(data.model == 'link'){
         let isCollaborator = await Lit.Actions.checkConditions({collaborators_data, authSig, chain})
         if(pkp.isPermitted(address)){
             sign() 
         }
         else if(isCollaborator){
+
+            sign()
+
+            /*
+            Seref indexer_didi cozdugunde yapicaz.
             if(op == "create"){
                 sign()
             }else if (op == "remove" || op == "update"){
@@ -122,6 +121,7 @@ const litAction = () => {
                     sign()
                 }
             }
+            */
         }else{
             error("you do not have a permission to curate to this index")
         }
@@ -133,7 +133,7 @@ const litAction = () => {
             sign(request.signature)
         }
     }
-    
+
 
 }
 
