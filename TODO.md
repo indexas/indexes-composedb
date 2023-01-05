@@ -6,23 +6,6 @@
   Sign jwe for auth
   Sign cid for create
 }
-- if(!data.prev){
-  //Genesis commit
-}
-
-- Mock models:
-index_42: {
-    controller_did: pkp_public_key
-    collab_action: ipfs_id
-}
-
-link: {
-    controller_did: pkp_public_key
-}
-
-ipfs_id: {
-    collab_list:  []
-}
 
 onIndexCreate flow : {
 - Mint pkp for each index. pkp is the owner of index.
@@ -57,33 +40,100 @@ onCollabUpdate flow: {
 - tokenId = ethers.BigNumber.from(pubkeyHash);
 
 
-index_42 : {
-	
-}
-
 index
 index_links index_id, indexed_at, encrypted(link_id) , encrypted(indexer_did)
 link
 
-decryptor = {
-	user.auth_sig // user signature at risk, indexes are safe.
-	app.auth_sig // indexes at risk, user is anonymous.
+
+Index{
+    id: StreamID
+    title: String! @string(maxLength:100) //Maxlength artiralim.
+    controller_did : createDidfrom(pkpPublicKey)
+    
+    createdAt: (Güzel olur. anchoring'e seref bakicak)
+    updatedAt: (Güzel olur. anchoring'e seref bakicak)
+
+    version: CommitID! @documentVersion
+    linksCount: Int! @relationCountFrom(model: "Link", property: "indexID")
+
+    collab_action: ipfs_id
 }
 
+type Link @createModel(accountRelation: LIST, description: "A Simple Link"){
+    indexID: StreamID! @documentReference(model: "Index")
+    index: Index! @relationDocument(property: "indexID")
+    controller_did: createDidfrom(pkpPublicKey)
+    indexer_did: did(pkh, user.wallet_id: 0x1b9Aceb609a62bae0c0a9682A9268138Faff4F5f) /Seref bakicak
 
-index.create (pkp owner) 
-index.update (pkp owner)
-link.create (pkp owner, collaborator)
-link.update (pkp owner, link owner)
-link.remove (pkp owner)
+    url: String! @string(maxLength:5000)
+    title: String! @string(maxLength:5000)
+    tags: String! @string(maxLength: 500) #Bu array olabiliyor mu?
+    content: String! @string(maxLength:50000)
 
-
-//Index create
-isPkpOwner(authSign.address){
-
+    createdAt: (Güzel olur. anchoring'e seref bakicak)
+    updatedAt: (Güzel olur. anchoring'e seref bakicak)
+    version: CommitID! @documentVersion
 }
 
-isColaborator(authSign.address){
+const litAction = () => {
+
+    let collaborators_data = []
+
+
+    if(currentData.removed_at){
+        error("Link is already deleleted!"")
+    }
+    if(data.model == 'index'){
+        if(data.prev){
+            op = "update"
+        }else{
+            op = "create"
+        }
+    }
+    if(data.model == 'link'){
+        if(data.prev){
+            op = "update"
+        }else if(data.removed_at){
+            op = "remove"
+        }else{
+            op = "create"
+        }
+    }
+
+
+    if(data.model == 'index'){
+        if(!pkp.isPermitted(address)){
+            error("Only permitted addresses can create or update an index with a pkp")
+        }else{
+            sign()
+        }
+    }
+
+    if(data.model == 'link'){
+        let isCollaborator = await Lit.Actions.checkConditions({collaborators_data, authSig, chain})
+        if(pkp.isPermitted(address)){
+            sign() 
+        }
+        else if(isCollaborator){
+            if(op == "create"){
+                sign()
+            }else if (op == "remove" || op == "update"){
+                if(currentData.indexer_did == address) {
+                    sign()
+                }
+            }
+        }else{
+            error("you do not have a permission to curate to this index")
+        }
+        
+    }
+
+    sign() => {
+        if(data.signature == request.signature){
+            sign(request.signature)
+        }
+    }
+    
 
 }
 
