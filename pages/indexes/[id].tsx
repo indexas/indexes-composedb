@@ -6,7 +6,7 @@ import { Context } from "@composedb/client";
 import { compose } from "../compose";
 import { useEffect, useState } from "react";
 import { useCeramicContext } from "../../context";
-import style from "/Users/furkanozelge/dev/littttttttttt/indexes-composedb/styles/Home.module.css";
+import style from "../../styles/Home.module.css";
 import type { BasicLink } from "../BasicLink";
 import type { BasicIndex } from "../BasicIndex";
 import { authenticateCeramic } from "../../utils";
@@ -30,6 +30,7 @@ function ID() {
   const [createdAt, setCreatedAt] = useState("");
   const [titleInput, setTitleInput] = useState("");
   const [users, setUsers] = useState("");
+
   //links
   const [linkuser,setLinkuser] =useState("");
   const [linkID, setLinkID] = useState("");
@@ -49,6 +50,7 @@ function ID() {
   // }, [])
   const handleLogin = async () => {
     await authenticateCeramic(ceramic, composeClient);
+
    // await readData();
    // await readLink();
   };
@@ -60,6 +62,7 @@ function ID() {
   }, []);
 
   const streamIDs = router.query.id;
+
   const getLink = async () => {
     if (ceramic.did !== undefined) {
       const link = await composeClient.executeQuery(`
@@ -147,7 +150,7 @@ function ID() {
  
 
   const updateIndexTitle = async () => {
-    if (ceramic.did !== undefined) {
+    if (ceramic.did !== undefined && ceramic.did.id === userID) {
       const updateindex = await composeClient.executeQuery(`
       mutation {
         updateIndex(input: {
@@ -166,9 +169,13 @@ function ID() {
     `);
       await getIndex();
     }
+    else{
+      console.log("UserID != Your DID");
+    }
   };
   //LINKS
   const updateLink = async () => {
+    if (ceramic.did !== undefined && ceramic.did.id === userID) {
     const updatelink = await composeClient.executeQuery(`
         mutation {
           createLink(input: {
@@ -198,6 +205,10 @@ function ID() {
         }
       `);
     await getLink();
+      }
+      else{
+        console.log("UserID != Your DID");
+      }
   };
   function logElements(elements: string[]) {
     elements.forEach(element => {
@@ -234,17 +245,24 @@ function ID() {
   */
   return (
     <>
+    <div className={style.container}>
       <div className={style.form}>
         <div className={style.formGroup}>
           <button
-            onClick={() => {
+            onClick={()=>{
               handleLogin();
+            }}>
+              LOGIN
+          </button>
+          <button
+            onClick={() => {
               readData();
               readLink();
             }}
           >
-            LOGIN & FETCH INDEX
+             FETCH INDEX
           </button>
+          <div className={style.formGroup}>
           <input
             type="text"
             defaultValue={index?.title || ""}
@@ -253,6 +271,7 @@ function ID() {
               setTitle(e.target.value);
             }}
           />
+          </div>
           <button
             onClick={() => {
               updateIndexTitle();
@@ -262,11 +281,12 @@ function ID() {
             Click to Change{" "}
           </button>
         </div>
-        <h1>new title : {titleInput}</h1>
-        <h1>ID : {router.query.id}</h1>
-        <h2>Index Title: {title}</h2>
-        <h2>User ID: {userID}</h2>
-        <h2>Created At: {createdAt}</h2>
+        <h2>ID : </h2>
+        <h3>{router.query.id}</h3>
+        <h2>Index Title: </h2>
+        <h3>{title}</h3>
+        <h4>Indexer ID: {userID}</h4>
+        <h4>Created At: {createdAt}</h4>
         <br></br>
         <br></br>
         <br></br>
@@ -287,8 +307,10 @@ function ID() {
       })}
 
 
-        <h1> CREATE NEW LINK ON YOUR INDEX </h1>
+        <h1> Create Link </h1>
+        <div className={style.form}>
         <h3>Link Users</h3>
+        <div className={style.formGroup}>
         <input
           type="text"
           value={link?.users || ""}
@@ -297,7 +319,9 @@ function ID() {
             setLinkuser(e.target.value);
           }}
         ></input>
+        </div>
         <h3>Link URL</h3>
+        <div className={style.formGroup}>
         <input
           type="text"
           defaultValue={link?.url || ""}
@@ -306,7 +330,9 @@ function ID() {
             setLinkurl(e.target.value);
           }}
         />
+        </div>
         <h3>Link title</h3>
+        <div className={style.formGroup}>
         <input
           type="text"
           defaultValue={link?.title || ""}
@@ -315,7 +341,9 @@ function ID() {
             setLinktitle(e.target.value);
           }}
         />
+        </div>
         <h3>Link UpdatedAt</h3>
+        <div className={style.formGroup}>
         <input
           type="text"
           defaultValue={link?.updatedAt || ""}
@@ -324,7 +352,9 @@ function ID() {
             setLinkupdatedAt(e.target.value);
           }}
         />
+        </div>
         <h3>Link Createdat</h3>
+        <div className={style.formGroup}>
         <input
           type="text"
           defaultValue={link?.createdAt || ""}
@@ -333,7 +363,9 @@ function ID() {
             setLinkcreatedAt(e.target.value);
           }}
         />
+        </div>
         <h3>Link Tags</h3>
+        <div className={style.formGroup}>
         <input
           type="text"
           defaultValue={link?.tags || ""}
@@ -342,7 +374,9 @@ function ID() {
             setLinktags(e.target.value);
           }}
         />
+        </div>
         <h3>Link Content</h3>
+        <div className={style.formGroup}>
         <input
           type="text"
           defaultValue={link?.content || ""}
@@ -351,7 +385,10 @@ function ID() {
             setLinkcontent(e.target.value);
           }}
         />
+        </div>
         <button onClick={updateLink}>Add Link</button>
+      </div>
+      </div>
       </div>
     </>
   );

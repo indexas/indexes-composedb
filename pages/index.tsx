@@ -107,7 +107,7 @@ const Home: NextPage = () => {
           createIndex(input: {
             content: {
               title: "${title}"
-              userID: "${userID}"
+              userID: "${ceramic.did.id}"
               createdAt: "${createdAt}"
             }
           }) 
@@ -238,10 +238,10 @@ const Home: NextPage = () => {
               />
             </div>
             <div className={styles.formGroup}>
-              <label>Index UserID</label>
+              <label>Indexer ID</label>
               <input
                 type="text"
-                defaultValue={index?.userID || ""}
+                defaultValue={ceramic.did.id || ""} 
                 onChange={(e) => {
                   setIndex({ ...index, userID: e.target.value });
                   setUserID(e.target.value);

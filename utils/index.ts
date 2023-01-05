@@ -25,7 +25,6 @@ declare global {
 export const authenticateCeramic = async (ceramic: CeramicApi, compose: ComposeClient) => {
 
   const encodedDID = await encodeDIDWithLit("0x04f53eaacaf0bbf78fbf1606724e81e55b258aa22342fd94c9ccbaac0b3093e3a37608f96c42189574c94e21c4a101d85f381228ede5808d1c2bb719a1b7c18984");
-
   const provider = new Secp256k1ProviderWithLit({
     did: encodedDID,
     ipfsId: "Qme9L6jU4CStoBZL7etpwPVX7XPWJ59Z9iFXoTPXyfgXrT",
@@ -39,6 +38,6 @@ export const authenticateCeramic = async (ceramic: CeramicApi, compose: ComposeC
   await did.authenticate()
   // Set our Ceramic DID to be our session DID.
   compose.setDID(did)
-  ceramic.did = did
-  return
+  ceramic.did = did 
+  return did
 }
