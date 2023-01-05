@@ -89,6 +89,8 @@ const litAction = () => {
         }else{
             op = "create"
         }
+
+        //note seref: bir pkp ile sadece bir index yaratilabilir seklinde guncelle.
         if(!isPermittedAddress(tokenId, address)){
             error("Only permitted addresses can create or update an index with a pkp")
         }else{
