@@ -77,12 +77,11 @@ type Link @createModel(accountRelation: LIST, description: "A Simple Link"){
 
 const litAction = () => {
 
+    let index_id = 42; //Sanki her index icin yeni bir aksiyon yaratmasini saglamaliyiz gibi. Bunu zorlayalim 
     let collaborators_data = []
 
 
-    if(currentData.removed_at){
-        error("Link is already deleleted!"")
-    }
+    
     if(data.model == 'index'){
         if(data.prev){
             op = "update"
@@ -90,7 +89,6 @@ const litAction = () => {
             op = "create"
         }
 
-        //note seref: bir pkp ile sadece bir index yaratilabilir seklinde guncelle.
         if(!isPermittedAddress(tokenId, address)){
             error("Only permitted addresses can create or update an index with a pkp")
         }else{
@@ -98,6 +96,12 @@ const litAction = () => {
         }
     }
     if(data.model == 'link'){
+        
+        //Su an bu kontrolu yapamiyoruz. Frontend'de yapalim cok kritik degil.
+        if(data.removed_at){
+            error("Link is already deleted!"")
+        }
+
         if(data.prev){
             op = "update"
         }else if(data.removed_at){
@@ -119,7 +123,7 @@ const litAction = () => {
             if(op == "create"){
                 sign()
             }else if (op == "remove" || op == "update"){
-                if(currentData.indexer_did == address) {
+                if(data.indexer_did == address) {
                     sign()
                 }
             }
