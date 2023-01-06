@@ -50,8 +50,8 @@ Index{
     title: String! @string(maxLength:100) //Maxlength artiralim.
     controller_did : createDidfrom(pkpPublicKey)
     
-    createdAt: (Güzel olur. anchoring'e seref bakicak)
-    updatedAt: (Güzel olur. anchoring'e seref bakicak)
+    createdAt: (Ceramic'te var zaten)
+    updatedAt: (Ceramic'te var zaten)
 
     version: CommitID! @documentVersion
     linksCount: Int! @relationCountFrom(model: "Link", property: "indexID")
@@ -63,15 +63,16 @@ type Link @createModel(accountRelation: LIST, description: "A Simple Link"){
     indexID: StreamID! @documentReference(model: "Index")
     index: Index! @relationDocument(property: "indexID")
     controller_did: createDidfrom(pkpPublicKey)
-    indexer_did: did(pkh, user.wallet_id: 0x1b9Aceb609a62bae0c0a9682A9268138Faff4F5f) /Seref bakicak
+    indexer_did: did(pkh, user.wallet_id: 0x1b9Aceb609a62bae0c0a9682A9268138Faff4F5f) /Baktim
+    #did:pkh:eip155:1:0x1b9aceb609a62bae0c0a9682a9268138faff4f5f
 
     url: String! @string(maxLength:5000)
     title: String! @string(maxLength:5000)
     tags: String! @string(maxLength: 500) #Bu array olabiliyor mu?
     content: String! @string(maxLength:50000)
 
-    createdAt: (Güzel olur. anchoring'e seref bakicak)
-    updatedAt: (Güzel olur. anchoring'e seref bakicak)
+    createdAt: (Ceramic'te var zaten)
+    updatedAt: (Ceramic'te var zaten)
     version: CommitID! @documentVersion
 }
 
