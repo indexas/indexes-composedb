@@ -4,7 +4,7 @@
  */
 export type Indexes = {
   title: string | null
-  version: string
+  version: string | null
   collabAction: string | null
   links: Links[];
 };

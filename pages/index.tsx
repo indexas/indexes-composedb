@@ -12,17 +12,19 @@ import styles from "../styles/Home.module.css";
 import type { BasicIndex } from "./BasicIndex";
 import type { BasicLink } from "./BasicLink";
 import { useRouter } from "next/router";
+import { compose } from "@reduxjs/toolkit";
+import { Indexes } from "../types/entity";
+import {ceramic, composeClient} from "../context/CeramicProvider";
+import { useMergedState } from "../hooks/useMergedState";
+import { useCeramic } from "../hooks/useCeramic";
 
 const Home: NextPage = () => {
-  const clients = useCeramicContext();
-  const { ceramic, composeClient } = clients;
+  const composedb = useCeramic();
   const [profile, setProfile] = useState<BasicProfile | undefined>();
   const [index, setIndex] = useState<BasicIndex | undefined>();
   const [link, setLink] = useState<BasicLink | undefined>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [title,setTitle] = useState("");
-  const [userID,setUserID] = useState("");
-  const [createdAt,setCreatedAt] = useState("");
+
   const router = useRouter();
   const handleLogin = async () => {
     await authenticateCeramic(ceramic, composeClient);
@@ -40,8 +42,8 @@ const Home: NextPage = () => {
             basicIndex {
               id
               title
-              userID
-              createdAt
+              version
+              collabAction
             }
           }
         }
@@ -59,13 +61,11 @@ const Home: NextPage = () => {
           viewer {
             basicLink {
               indexID
-              users
+              indexer_did
               url
               title
               tags
-              createdAt
-              updatedAt
-              content
+              version
             }
           }
         }
@@ -98,28 +98,13 @@ const Home: NextPage = () => {
     }
   };
   const updateIndex = async () => {
-
     setLoading(true);
     if (ceramic.did !== undefined) {
-      const doc = clients.createDoc()
-      const updateindex = await composeClient.executeQuery(`
-        mutation {
-          createIndex(input: {
-            content: {
-              title: "${title}"
-              userID: "${ceramic.did.id}"
-              createdAt: "${createdAt}"
-            }
-          }) 
-          {
-            document {
-              title
-              userID
-              createdAt
-            }
-          }
+        console.log(index);
+        const doc = await composedb.createDoc(index as Indexes);
+        if(doc != null){
+          console.log(doc);
         }
-      `);
       await getIndex();
       setLoading(false);
     }
@@ -132,24 +117,22 @@ const Home: NextPage = () => {
           createLink(input: {
             content: {
               indexID: "${link?.indexID}"
-              users: "${link?.users}"
+              indexer_did: "${link?.indexer_did}"
               url: "${link?.url}"
               title: "${link?.title}"
               tags: "${link?.tags}"
-              createdAt: "${link?.createdAt}"
-              updatedAt: "${link?.updatedAt}"
+              version: "${link?.version}"
               content: "${link?.content}"
             }
           }) 
           {
             document {
               indexID
-              users
+              indexer_did
               url
               title
               tags
-              createdAt
-              updatedAt
+              version
               content
             }
           }
@@ -233,29 +216,26 @@ const Home: NextPage = () => {
                 defaultValue={index?.title || ""}
                 onChange={(e) => {
                   setIndex({ ...index, title: e.target.value });
-                  setTitle(e.target.value);
                 }}
               />
             </div>
             <div className={styles.formGroup}>
-              <label>Indexer ID</label>
+              <label>Version</label>
               <input
                 type="text"
-                defaultValue={ceramic.did.id || ""} 
+                defaultValue={index?.version || ""} 
                 onChange={(e) => {
-                  setIndex({ ...index, userID: e.target.value });
-                  setUserID(e.target.value);
+                  setIndex({ ...index, version: e.target.value });
                 }}
               />
             </div>
             <div className={styles.formGroup}>
-              <label>Index CreatedAt</label>
+              <label>Collab Action</label>
               <input
                 type="text"
-                defaultValue={index?.createdAt || ""}
+                defaultValue={index?.collabAction || ""}
                 onChange={(e) => {
-                  setIndex({ ...index, createdAt: e.target.value });
-                  setCreatedAt(e.target.value);
+                  setIndex({ ...index, collabAction: e.target.value });
                 }}
               />
             </div>

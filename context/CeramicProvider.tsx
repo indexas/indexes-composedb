@@ -22,8 +22,6 @@ export interface CeramicContextState {
 }
 
 export interface CeramicContextValue {
-	ceramic: any;
-	composeClient: any;
 	socketConnected: boolean;
 	syncedData: any;
 	createDoc(doc: Partial<Indexes>): Promise<Indexes | null>;
@@ -46,7 +44,7 @@ export const composeClient = new ComposeClient({
 	// cast our definition as a RuntimeCompositeDefinition
 	definition: definition as RuntimeCompositeDefinition,
   });
-export const CeramicContext = createContext<CeramicContextValue>({ceramic: ceramic, composeClient: composeClient} as any);
+export const CeramicContext = React.createContext<CeramicContextValue>({} as any);
 
 const CeramicProvider: React.FC<{}> = ({
 	children,
@@ -163,8 +161,6 @@ const CeramicProvider: React.FC<{}> = ({
 			removeLink,
 			removeTag,
 			uploadImage,
-			ceramic,
-			composeClient,
 		}}>
 			{children}
 		</CeramicContext.Provider>
