@@ -1,10 +1,9 @@
 export interface BasicLink {
     indexID?: string;
-    users?: string;
+    indexer_did?: string;
     url?: string;
     title?: string;
     tags?: string;
-    createdAt?: string;
-    updatedAt?: string;
     content?: string;
+    version?: string;
   }

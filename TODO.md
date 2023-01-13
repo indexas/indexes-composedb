@@ -75,6 +75,7 @@ type Link @createModel(accountRelation: LIST, description: "A Simple Link"){
     updatedAt: (Ceramic'te var zaten)
     version: CommitID! @documentVersion
 }
+////// DONE
 
 const litAction = () => {
 

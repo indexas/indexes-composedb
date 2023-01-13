@@ -12,6 +12,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@3id/connect": "^0.4.1",
     "@ceramicnetwork/blockchain-utils-linking": "^2.7.1",
     "@ceramicnetwork/common": "^2.15.1",
     "@ceramicnetwork/http-client": "^2.12.1",
@@ -20,15 +21,22 @@
     "@composedb/devtools-node": "^0.3.1",
     "@didtools/cacao": "^1.1.0",
     "@didtools/pkh-ethereum": "^0.0.2",
+    "@reduxjs/toolkit": "^1.9.1",
+    "@self.id/web": "^0.5.0",
     "chalk": "^5.2.0",
     "did-session": "^1.0.0",
     "dids": "^3.4.0",
     "graphql": "^16.6.0",
+    "ipfs-http-client": "^59.0.0",
     "lit-js-sdk": "^1.2.7",
+    "moment": "^2.29.4",
     "next": "^12.3.4",
     "ora": "^6.1.2",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-redux": "^8.0.5",
+    "socket.io-client": "^4.5.4",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@composedb/types": "^0.3.1",
@@ -36,6 +44,7 @@
     "@glazed/types": "^0.2.0",
     "@types/node": "18.11.18",
     "@types/react": "18.0.26",
+    "@types/uuid": "^9.0.0",
     "eslint": "^8.31.0",
     "eslint-config-next": "^12.3.4",
     "key-did-provider-ed25519": "^2.0.1",

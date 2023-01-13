@@ -6,7 +6,7 @@ import type { BasicProfile } from "@datamodels/identity-profile-basic";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import { ComposeClient } from '@composedb/client'
 import ceramicLogo from "../public/ceramic.png";
-import { useCeramicContext } from "../context";
+import { useCeramicContext } from "../context/CeramicProvider";
 import { authenticateCeramic } from "../utils";
 import styles from "../styles/Home.module.css";
 import type { BasicIndex } from "./BasicIndex";
@@ -23,7 +23,6 @@ const Home: NextPage = () => {
   const [title,setTitle] = useState("");
   const [userID,setUserID] = useState("");
   const [createdAt,setCreatedAt] = useState("");
-
   const router = useRouter();
   const handleLogin = async () => {
     await authenticateCeramic(ceramic, composeClient);
@@ -102,6 +101,7 @@ const Home: NextPage = () => {
 
     setLoading(true);
     if (ceramic.did !== undefined) {
+      const doc = clients.createDoc()
       const updateindex = await composeClient.executeQuery(`
         mutation {
           createIndex(input: {

@@ -1,5 +1,5 @@
 export interface BasicIndex {
     title?: string;
-    userID?: string;
-    createdAt?: string;
+    version?: string;
+    collabAction?: string;
   }

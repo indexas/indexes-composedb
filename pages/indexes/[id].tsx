@@ -5,7 +5,7 @@ import { CeramicClient } from "@ceramicnetwork/http-client";
 import { Context } from "@composedb/client";
 import { compose } from "../compose";
 import { useEffect, useState } from "react";
-import { useCeramicContext } from "../../context";
+import { useCeramicContext } from "../../context/CeramicProvider";
 import style from "../../styles/Home.module.css";
 import type { BasicLink } from "../BasicLink";
 import type { BasicIndex } from "../BasicIndex";
