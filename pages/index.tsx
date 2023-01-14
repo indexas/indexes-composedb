@@ -6,7 +6,6 @@ import type { BasicProfile } from "@datamodels/identity-profile-basic";
 import {BrowserRouter as Router, Route} from "react-router-dom";
 import { ComposeClient } from '@composedb/client'
 import ceramicLogo from "../public/ceramic.png";
-import { useCeramicContext } from "../context/CeramicProvider";
 import { authenticateCeramic } from "../utils";
 import styles from "../styles/Home.module.css";
 import type { BasicIndex } from "./BasicIndex";
@@ -14,7 +13,7 @@ import type { BasicLink } from "./BasicLink";
 import { useRouter } from "next/router";
 import { compose } from "@reduxjs/toolkit";
 import { Indexes } from "../types/entity";
-import {ceramic, composeClient} from "../context/CeramicProvider";
+import {ceramic, composeClient,CeramicContextValue} from "../context/CeramicProvider";
 import { useMergedState } from "../hooks/useMergedState";
 import { useCeramic } from "../hooks/useCeramic";
 
@@ -101,10 +100,9 @@ const Home: NextPage = () => {
     setLoading(true);
     if (ceramic.did !== undefined) {
         console.log(index);
+        
         const doc = await composedb.createDoc(index as Indexes);
-        if(doc != null){
-          console.log(doc);
-        }
+
       await getIndex();
       setLoading(false);
     }

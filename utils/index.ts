@@ -31,7 +31,7 @@ export const authenticateCeramic = async (ceramic: CeramicApi, compose: ComposeC
     pkpPublicKey:
         "0x04f53eaacaf0bbf78fbf1606724e81e55b258aa22342fd94c9ccbaac0b3093e3a37608f96c42189574c94e21c4a101d85f381228ede5808d1c2bb719a1b7c18984",
   });
-
+  console.log(encodedDID);
 
   let did = new DID({ provider, resolver: getResolver() });
 

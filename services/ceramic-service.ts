@@ -3,15 +3,14 @@ import { TileDocument } from "@ceramicnetwork/stream-tile";
 import { SelfID, WebClient } from "@self.id/web";
 import { Indexes, LinkContentResult, Links } from "../types/entity";
 import { prepareLinks, isSSR, setDates } from "../utils/helper";
-import { useCeramicContext } from "../context/CeramicProvider";
+
+import { definition } from "../src/__generated__/definition.js";
 import type { BasicProfile } from "@datamodels/identity-profile-basic";
 import { DID } from "dids";
 import { create, IPFSHTTPClient } from "ipfs-http-client";
 import { appConfig } from "../config";
-
+import {CeramicContext, ceramic, composeClient} from "../context/CeramicProvider"
 class CeramicService2 {
-	
-	
 	hostnameCheck = () : string => {
 		if (typeof window !== "undefined") {
 			if (window.location.hostname === "testnet.index.as") {
@@ -57,9 +56,6 @@ class CeramicService2 {
 	async getIndexById(streamId: string) {
 		try{
 			// eslint-disable-next-line react-hooks/rules-of-hooks
-			const clients = useCeramicContext();
-			const ceramic = clients.ceramic;
-			const composeClient = clients.composeClient;
 			const result = await composeClient.executeQuery(`{
 				node(id:"${streamId}"){
 				  id
@@ -83,7 +79,6 @@ class CeramicService2 {
 	async createIndex(data: Partial<Indexes>): Promise<Indexes | null> {
 		try {
 			setDates(data);
-
 			if (!data.title) {
 				data.title = "Untitled Index";
 			}
@@ -93,19 +88,20 @@ class CeramicService2 {
 			} else {
 				data.links = prepareLinks(data.links);
 			}
-			const createIndex = await this.composeClient.executeQuery(`
+			console.log("DOĞRU YERDE")
+			
+			const createIndex = await composeClient.executeQuery(`
 				mutation {
 				createIndex(input: {
 					content: {
 					title: "${data?.title}"
-					version: "${data?.version}"
 					collabAction: "${data?.collabAction}"
 					}
 				}) 
 				{
 					document {
+					id
 					title
-					version
 					collabAction
 					}
 				}
@@ -115,9 +111,7 @@ class CeramicService2 {
 				family: `index-as-${this.account || ""}`,
 			});
 			*/
-			return {
-				data
-			};
+			return null;
 			
 		} catch (err) {
 			return null;
@@ -232,7 +226,7 @@ class CeramicService2 {
 	async updateIndex(streamId: string, content: Partial<Indexes>) {
 		setDates(content, true);
 		const oldDoc = await this.getIndexById(streamId);
-		const updateindex = await this.composeClient.executeQuery(`
+		const updateindex = await composeClient.executeQuery(`
 			mutation {
 				updateIndex(input: {
 				id: "${streamId}"

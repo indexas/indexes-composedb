@@ -1,5 +1,6 @@
 import React, {
 	createContext,
+	PropsWithChildren,
 	useContext,
 	useEffect, useMemo, useRef, useState,
 } from "react";
@@ -12,7 +13,7 @@ import { RuntimeCompositeDefinition } from "@composedb/types";
 import { Indexes, LinkContentResult, Links } from "../types/entity";
 import type { BasicProfile } from "@datamodels/identity-profile-basic";
 import socketIoClient, { Socket } from "socket.io-client";
-import { useAuth } from "../hooks/useAuth";
+//import { useAuth } from "../hooks/useAuth";
 import { CID } from "ipfs-http-client";
 
 export type ListenEvents = {
@@ -21,9 +22,10 @@ export type ListenEvents = {
 export interface CeramicContextState {
 }
 
-export interface CeramicContextValue {
+export interface CeramicContextValue  {
 	socketConnected: boolean;
 	syncedData: any;
+	children: React.ReactNode;
 	createDoc(doc: Partial<Indexes>): Promise<Indexes | null>;
 	updateDoc(streamId: string, content: Partial<Indexes>): Promise<TileDocument<any>>;
 	getDocById(streamId: string): Promise<TileDocument<Indexes>>;
@@ -46,13 +48,13 @@ export const composeClient = new ComposeClient({
   });
 export const CeramicContext = React.createContext<CeramicContextValue>({} as any);
 
-const CeramicProvider: React.FC<{}> = ({
+export const CeramicProvider: React.FC<{children: React.ReactNode}> = ({
 	children,
 }) => {
 	const io = useRef<Socket<ListenEvents, {}>>();
-	const authenticated = useAuth();
+	//const authenticated = useAuth();
 	const [syncedData, setSyncedData] = useState<LinkContentResult>();
-
+	console.log("ceramicprovider içine girdi")
 	// Socket Variables
 	const [socketConnected, setSocketConnected] = useState(false);
 	const handlers: ListenEvents = useMemo(() => ({
@@ -63,8 +65,10 @@ const CeramicProvider: React.FC<{}> = ({
 
 	const createDoc = async (data: Partial<Indexes>) => {
 		try {
+			console.log("zafer")
+			console.log("bura",data);
 			const doc = await ceramicService.createIndex(data);
-			return null;
+			return doc;
 		} catch (err) {
 			return null;
 		}
@@ -124,25 +128,7 @@ const CeramicProvider: React.FC<{}> = ({
 		  return appConfig.baseUrl;
 	};
 	*/
-	useEffect(() => {
-		if (authenticated) {
-			if (io.current && io.current.connected) {
-				io.current.removeAllListeners();
-				io.current.disconnect();
-			}
 
-			
-		}  if (io.current && io.current!.connected) {
-			io.current!.removeAllListeners();
-			io.current!.disconnect();
-		}
-
-		return () => {
-			if (io.current && io.current.connected) {
-				io.current!.disconnect();
-			}
-		};
-	}, [authenticated]);
 
 	return (
 		<CeramicContext.Provider value={{
@@ -166,5 +152,6 @@ const CeramicProvider: React.FC<{}> = ({
 		</CeramicContext.Provider>
 	);
 };
-export const useCeramicContext = () => useContext(CeramicContext);
+
+//export const useCeramicContext = () => useContext(CeramicContext);
 export default CeramicProvider;
