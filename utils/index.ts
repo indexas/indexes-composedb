@@ -34,7 +34,7 @@ export const authenticateCeramic = async (ceramic: CeramicApi, compose: ComposeC
   console.log(encodedDID);
 
   let did = new DID({ provider, resolver: getResolver() });
-
+  //debugger;
   await did.authenticate()
   // Set our Ceramic DID to be our session DID.
   compose.setDID(did)

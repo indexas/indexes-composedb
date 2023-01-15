@@ -5,11 +5,13 @@ import { CeramicClient } from "@ceramicnetwork/http-client";
 import { Context } from "@composedb/client";
 import { compose } from "../compose";
 import { useEffect, useState } from "react";
-import { useCeramicContext } from "../../context/CeramicProvider";
+import {ceramic,composeClient} from "../../context/CeramicProvider";
 import style from "../../styles/Home.module.css";
 import type { BasicLink } from "../BasicLink";
 import type { BasicIndex } from "../BasicIndex";
 import { authenticateCeramic } from "../../utils";
+import { useCeramic } from "../../hooks/useCeramic";
+import { Indexes } from "../../types/entity";
 interface LinkData {
   id: string;
   title: string;
@@ -21,8 +23,7 @@ interface LinkData {
 function ID() {
   const router = useRouter();
   const [link, setLink] = useState<BasicLink | undefined>();
-  const clients = useCeramicContext();
-  const { ceramic, composeClient } = clients;
+  const composedb = useCeramic();
   const [linkdata, setLinkdata] = useState<Array<LinkData | undefined>>([]);
   const [data, setData] = useState("");
   const [title, setTitle] = useState("");
@@ -126,12 +127,13 @@ function ID() {
           }
       }}
     }`);
-    console.log(result.data.node.links.edges);
-    setLinkdata(result.data.node.links.edges);
+    //console.log(result.data.node.links.edges);
+    //setLinkdata(result.data.node.links.edges);
   }
 
   async function readData() {
-    const result = await composeClient.executeQuery(`{
+    const doc = await composedb.getDocById(streamIDs as string);
+   /* const result = await composeClient.executeQuery(`{
       node(id:"${streamIDs}"){
         id
         ... on Index{
@@ -140,38 +142,20 @@ function ID() {
           createdAt
       }}
     }`);
-
-    setData(result.data.node);
-    console.log(data);
-    setTitle(result.data.node.title);
-    setUserID(result.data.node.userID);
-    setCreatedAt(result.data.node.createdAt);
+*/
+    //setData(result.data.node);
+    //console.log(data);
+    //setTitle(result.data.node.title);
+    //setUserID(result.data.node.userID);
+    //setCreatedAt(result.data.node.createdAt);
   }
  
 
   const updateIndexTitle = async () => {
-    if (ceramic.did !== undefined && ceramic.did.id === userID) {
-      const updateindex = await composeClient.executeQuery(`
-      mutation {
-        updateIndex(input: {
-          id: "${streamIDs}"
-          content: {
-            title: "${title}"
-          }
-        }) 
-        {
-          document {
-            id
-            title
-          }
-        }
-      }
-    `);
+
+      const doc = await composedb.updateDoc(streamIDs as string,index as Indexes);
       await getIndex();
-    }
-    else{
-      console.log("UserID != Your DID");
-    }
+
   };
   //LINKS
   const updateLink = async () => {
@@ -257,7 +241,7 @@ function ID() {
           <button
             onClick={() => {
               readData();
-              readLink();
+              //readLink();
             }}
           >
              FETCH INDEX
@@ -267,8 +251,8 @@ function ID() {
             type="text"
             defaultValue={index?.title || ""}
             onChange={(e) => {
-              //setIndex({ ...index, title: e.target.value });
-              setTitle(e.target.value);
+              setIndex({ ...index, title: e.target.value });
+              //setTitle(e.target.value);
             }}
           />
           </div>

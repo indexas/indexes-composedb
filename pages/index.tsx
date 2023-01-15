@@ -100,7 +100,7 @@ const Home: NextPage = () => {
     setLoading(true);
     if (ceramic.did !== undefined) {
         console.log(index);
-        
+
         const doc = await composedb.createDoc(index as Indexes);
 
       await getIndex();
@@ -197,7 +197,7 @@ const Home: NextPage = () => {
           height="100"
           className={styles.logo}
         />
-        {profile === undefined && ceramic.did === undefined ? (
+        
           <button
             onClick={() => {
               handleLogin();
@@ -205,7 +205,7 @@ const Home: NextPage = () => {
           >
             Login
           </button>
-        ) : (
+        
           <div className={styles.form}>
             <div className={styles.formGroup}>
               <label>Index Title</label>
@@ -263,7 +263,7 @@ const Home: NextPage = () => {
             </div>
           
           </div>
-        )}
+        }
       </main>
     </div>
 

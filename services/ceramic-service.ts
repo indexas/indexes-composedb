@@ -54,23 +54,21 @@ class CeramicService2 {
 	}
 
 	async getIndexById(streamId: string) {
-		try{
+		
 			// eslint-disable-next-line react-hooks/rules-of-hooks
+			//debugger;
 			const result = await composeClient.executeQuery(`{
 				node(id:"${streamId}"){
 				  id
 				  ... on Index{
 					title
-					version
 					collabAction
-					links
+					
 				}}
 			  }`);
+			  console.log(result)
 			return result.data.node;
 		//return TileDocument.load<Indexes>(this.client!.ceramic as any, streamId);
-	} 	catch(err){
-		console.log(err);
-	}
 	}
 	async getIndexes(streams: { streamId: string }[]): Promise<{ [key: string]: TileDocument<Indexes> }> {
 		return this.client.ceramic.multiQuery(streams) as any;
@@ -112,7 +110,7 @@ class CeramicService2 {
 			});
 			*/
 			return null;
-			
+			//debugger;
 		} catch (err) {
 			return null;
 		}
@@ -224,9 +222,10 @@ class CeramicService2 {
 	}
 
 	async updateIndex(streamId: string, content: Partial<Indexes>) {
+		//composea bak 
 		setDates(content, true);
 		const oldDoc = await this.getIndexById(streamId);
-		const updateindex = await composeClient.executeQuery(`
+		const updateIndex = await composeClient.executeQuery(`
 			mutation {
 				updateIndex(input: {
 				id: "${streamId}"
@@ -242,7 +241,7 @@ class CeramicService2 {
 				}
 			}
 			`);
-		return oldDoc;
+		return null;
 	}
 
 	async getProfile(): Promise<BasicProfile | null> {

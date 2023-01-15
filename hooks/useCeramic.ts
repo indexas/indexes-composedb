@@ -3,7 +3,7 @@ import { useContext } from "react";
 
 export function useCeramic() {
 	const context = useContext(CeramicContext);
-	console.log("useCeramic içine girdi");
+	//console.log("useCeramic içine girdi");
 	
 	return context;
 }
